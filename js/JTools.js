@@ -13,7 +13,7 @@
 
   function JTools() {
     this.slideDirection = function(selector, callback, real = false, realStartEnd = false){
-      let startX = 0, startY = 0, endX = 0, endY = 0, realX = 0, realY = 0, el = document.querySelector(`${selector}`)
+      let startX = 0, startY = 0, endX = 0, endY = 0, realX = 0, realY = 0, el = selector instanceof HTMLDivElement ? selector : document.querySelector(`${selector}`)
       if(el.ontouchstart === null){
         el.ontouchstart = function(e){
           endX = 0
