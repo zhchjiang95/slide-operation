@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>滑动删除等demo</title>
+  <style>
+    ul{
+      margin: 0;
+      list-style: none;
+      padding: 0;
+    }
+    li{
+      overflow: hidden;
+    }
+    h5,p{
+      margin: 0;
+    }
+    .item{
+      position: relative;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      transition: .3s;
+      user-select: none;
+    }
+    .item .description{
+      flex-shrink: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 8px;
+      background: #f1f0f6;
+    }
+    .description p{
+      font-size: 14px;
+      color: #999;
+    }
+    .btn-group{
+      white-space: nowrap;
+      font-size: 0;
+    }
+    .btn{
+      flex-shrink: 0;
+      width: 60px;
+      height: 100%;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgb(247, 70, 70);
+      color: #fff;
+    }
+    .btn:nth-child(1){
+      width: 100px;
+      background-color: rgb(247, 70, 70);
+    }
+    .btn:nth-child(2){
+      background-color: rgb(170, 247, 70);
+    }
+    .btn:nth-child(3){
+      background-color: rgb(70, 176, 247);
+    }
+    .btn span{
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <ul>
+    <li>
+      <div class="item">
+        <div class="description">
+          <h5>hello</h5>
+          <p>this is desc...</p>
+        </div>
+        <div class="btn-group">
+          <div class="btn" onclick="del()">
+            <span>删除</span>
+          </div>
+          <div class="btn" onclick="edit()">
+            <span>编辑</span>
+          </div>
+          <div class="btn" onclick="closeThis()">
+            <span>关闭</span>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <script src="./js/JTools.js"></script>
+  <script src="./js/jquery-min.js"></script>
+  <script>
+    // 需要一些的样式支撑
+
+    const del = function(){
+      console.log('delete')
+    }
+    const edit = function(){
+      console.log('edit')
+    }
+    const closeThis = function(){
+      console.log('closeThis')
+      $('.item').css('left', '0')
+    }
+
+    // 滑动事件
+    JTools.slideDirection('.item', (startEnd, realTime) => {
+      // 修改 extent 、point 即可
+      // extent：自动获取隐藏按钮的宽（需要移动的距离）
+      let extent = $('.btn-group').width()
+      // point：滑动差为 point 后，停止滑动时自动完成所有移动，应该小于 extent
+      let point = -30
+      let distance = realTime.realX - startEnd.startX
+      let limit = 0
+      if(startEnd.endX === 0){
+        if(distance < 0){
+          // 左滑
+          if(distance > -extent){
+            // 最多滑 extent
+            $('.item').css('left', `${distance}px`)
+          }
+        } else if(distance !== 0) {
+          // 右滑
+          limit = distance
+          $('.item').css('left', `${limit}px`)
+        }
+      }
+      // 左滑停止
+      if(startEnd.endX !== 0 && realTime.realX !== 0){
+        if(distance < point){
+          $('.item').css('left', `-${extent}px`)
+        } else if(distance !== 0) {
+          $('.item').css('left', '0')
+        }
+      }
+      // 监听超出
+      if(limit > 0){
+        $('.item').css('left', '0')
+      }
+    }, true, true)
+  </script>
+</body>
+
+</html>
